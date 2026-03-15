@@ -13,6 +13,9 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
-    mergedblocks
+    DT,
+    ggplot2,
+    mergedblocks,
+    shiny
 URL: https://github.com/mightymetrika/mmira
 BugReports: https://github.com/mightymetrika/mmira/issues
