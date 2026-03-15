@@ -14,3 +14,5 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     mergedblocks
+URL: https://github.com/mightymetrika/mmira
+BugReports: https://github.com/mightymetrika/mmira/issues
