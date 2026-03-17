@@ -15,32 +15,6 @@ mbr_app_text_to_vector <- function(text_input) {
   eval(parse(text = text_input))
 }
 
-#' Convert an optional seed input to integer
-#'
-#' @param seed_input Character string.
-#'
-#' @return An integer seed or `NULL`.
-#'
-#' @keywords internal
-mbr_app_seed <- function(seed_input = "") {
-  if (is.null(seed_input) || is.na(seed_input) || seed_input == "") {
-    return(NULL)
-  }
-
-  as.integer(seed_input)
-}
-
-#' Generate a simple run code
-#'
-#' @return A character run code.
-#'
-#' @keywords internal
-mbr_app_run_code <- function() {
-  timestamp <- format(Sys.time(), "%Y%m%d%H%M%S")
-  suffix <- paste(sample(c(letters, LETTERS, 0:9), 5, replace = TRUE), collapse = "")
-  paste0(timestamp, "_", suffix)
-}
-
 #' Append app input parameters to simulation results
 #'
 #' @param df A data frame of simulation results.
@@ -52,11 +26,10 @@ mbr_app_run_code <- function() {
 mbr_append_input_params <- function(df, input) {
   out <- df
 
-  out$run_code <- mbr_app_run_code()
+  out$run_code <- mmints::generateRunCode()
   out$app_setting <- input$setting
   out$app_methods <- paste(input$methods, collapse = ", ")
   out$app_n_simulations <- input$n_simulations
-  out$app_seed <- input$seed
 
   if (identical(input$setting, "single")) {
     out$app_n_values <- input$n_values
@@ -89,7 +62,6 @@ mbr_app_run_simulation <- function(input) {
         ratio = c(1, 1),
         labels = c("A", "B"),
         imbalance_threshold = input$imbalance_threshold,
-        seed = mbr_app_seed(input$seed),
         verbose = FALSE
       )
     )
@@ -103,7 +75,6 @@ mbr_app_run_simulation <- function(input) {
     max_n_per_centre = input$max_n_per_centre,
     ratio = c(1, 1),
     labels = c("A", "B"),
-    seed = mbr_app_seed(input$seed),
     verbose = FALSE
   )
 }

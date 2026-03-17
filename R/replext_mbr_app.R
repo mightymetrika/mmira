@@ -66,11 +66,6 @@ replext_mbr_app <- function() {
           min = 1,
           step = 1
         ),
-        shiny::textInput(
-          inputId = "seed",
-          label = "Seed (optional)",
-          value = "123"
-        ),
         shiny::conditionalPanel(
           condition = "input.setting == 'single'",
           shiny::textInput(
@@ -111,14 +106,19 @@ replext_mbr_app <- function() {
         shiny::actionButton("runSim", "Run Simulation"),
         shiny::br(),
         shiny::br(),
-        shiny::downloadButton("downloadBtn", "Download Results")
+        shiny::downloadButton("downloadBtn", "Download Results"),
+        shiny::br(),
+        shiny::br(),
+        mmints::citationUI("citations")$button
       ),
       shiny::mainPanel(
         shiny::uiOutput("simulation_results_header"),
         DT::DTOutput("resultsTable"),
         shiny::br(),
         shiny::uiOutput("plot_controls"),
-        shiny::plotOutput("resultsPlot")
+        shiny::plotOutput("resultsPlot"),
+        shiny::br(),
+        mmints::citationUI("citations")$output
       )
     )
   )
@@ -127,14 +127,26 @@ replext_mbr_app <- function() {
     results <- shiny::reactiveVal(data.frame())
     results_exp <- shiny::reactiveVal(data.frame())
 
+    citations <- list(
+      "Merged block randomisation paper:" =
+        "van der Pas, S. L. (2019). Merged block randomisation: A novel randomisation procedure for small clinical trials. Clinical trials (London, England), 16(3), 246-252. https://doi.org/10.1177/1740774519827957",
+      "Software implementing merged block randomisation:" = function() {
+        mmints::format_citation(utils::citation("mergedblocks"))
+      }
+    )
+
+    mmints::citationServer("citations", citations)
+
     shiny::observeEvent(input$runSim, {
       shiny::req(length(input$methods) > 0)
 
       sim_results <- mbr_app_run_simulation(input)
       rownames(sim_results) <- NULL
 
-      results(sim_results)
-      results_exp(mbr_append_input_params(sim_results, input))
+      sim_results_exp <- mbr_append_input_params(sim_results, input)
+
+      results(sim_results_exp)
+      results_exp(sim_results_exp)
     })
 
     output$simulation_results_header <- shiny::renderUI({
