@@ -12,6 +12,7 @@ replext_mbr_multi(
   max_n_per_centre = 50,
   ratio = c(1, 1),
   labels = c("A", "B"),
+  pbr_block_size = 4L,
   seed = NULL,
   verbose = FALSE
 )
@@ -31,6 +32,8 @@ recruitment.}
 \item{ratio}{Integer allocation ratio. Defaults to \code{c(1, 1)}.}
 
 \item{labels}{Character labels for each treatment arm.}
+
+\item{pbr_block_size}{Integer permuted block size used when \code{method = "PBR"}.}
 
 \item{seed}{Optional random seed.}
 

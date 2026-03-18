@@ -17,6 +17,7 @@ Imports:
     ggplot2,
     mergedblocks,
     mmints,
+    rlang,
     shiny
 URL: https://github.com/mightymetrika/mmira
 BugReports: https://github.com/mightymetrika/mmira/issues

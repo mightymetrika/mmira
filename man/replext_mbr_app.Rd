@@ -23,6 +23,7 @@ Van der Pas (2019):
 \item multicentre runs with \code{lambda = 15:30}, \code{10} centres, and a maximum
 of \code{50} participants per centre
 \item \code{1000} simulation runs per condition
+\item permuted block randomisation default block size of \code{4}
 }
 
 The app is intentionally simple so it can later be extended with the

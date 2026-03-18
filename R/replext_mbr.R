@@ -11,6 +11,7 @@
 #'   `c("A", "B")`.
 #' @param imbalance_threshold Integer. Threshold used for the suballocation
 #'   imbalance metric. Defaults to `2` to match the paper's main setting.
+#' @param pbr_block_size Integer permuted block size used when `method = "PBR"`.
 #'
 #' @return A named list with the allocation and summary metrics.
 #'
@@ -27,14 +28,16 @@ simulate_mbr_once <- function(n,
                               method = c("MBR", "PBR", "CR"),
                               ratio = c(1, 1),
                               labels = c("A", "B"),
-                              imbalance_threshold = 2) {
+                              imbalance_threshold = 2,
+                              pbr_block_size = 4L) {
   method <- match.arg(method)
 
   allocation <- mbr_generate_allocation(
     n = n,
     method = method,
     ratio = ratio,
-    labels = labels
+    labels = labels,
+    pbr_block_size = pbr_block_size
   )
 
   list(
@@ -66,6 +69,7 @@ simulate_mbr_once <- function(n,
 #' @param labels Character labels for each treatment arm.
 #' @param imbalance_threshold Integer. Threshold used for the suballocation
 #'   imbalance metric.
+#' @param pbr_block_size Integer permuted block size used when `method = "PBR"`.
 #' @param seed Optional random seed.
 #' @param verbose Logical. If `TRUE`, prints simple progress messages.
 #'
@@ -86,6 +90,7 @@ replext_mbr_single <- function(n_values = 10:100,
                                ratio = c(1, 1),
                                labels = c("A", "B"),
                                imbalance_threshold = 2,
+                               pbr_block_size = 4L,
                                seed = NULL,
                                verbose = FALSE) {
   mbr_check_paper_metric_inputs(ratio = ratio, labels = labels)
@@ -110,7 +115,8 @@ replext_mbr_single <- function(n_values = 10:100,
           method = method,
           ratio = ratio,
           labels = labels,
-          imbalance_threshold = imbalance_threshold
+          imbalance_threshold = imbalance_threshold,
+          pbr_block_size = pbr_block_size
         )
       }
 
@@ -120,6 +126,7 @@ replext_mbr_single <- function(n_values = 10:100,
         n = n_i,
         n_simulations = n_simulations,
         imbalance_threshold = imbalance_threshold,
+        pbr_block_size = pbr_block_size,
         mean_final_imbalance = mean(vapply(sim_list, function(x) x$final_imbalance, numeric(1))),
         mean_suballocation_imbalance = mean(vapply(sim_list, function(x) x$mean_suballocation_imbalance, numeric(1))),
         prop_suballocation_imbalance = mean(vapply(sim_list, function(x) x$prop_suballocation_imbalance, numeric(1))),
@@ -150,6 +157,7 @@ replext_mbr_single <- function(n_values = 10:100,
 #' @param max_n_per_centre Integer. Maximum allocation list length per centre.
 #' @param ratio Integer allocation ratio. Defaults to `c(1, 1)`.
 #' @param labels Character labels for each treatment arm.
+#' @param pbr_block_size Integer permuted block size used when `method = "PBR"`.
 #' @param seed Optional random seed.
 #' @param verbose Logical. If `TRUE`, prints simple progress messages.
 #'
@@ -171,6 +179,7 @@ replext_mbr_multi <- function(lambda_values = 15:30,
                               max_n_per_centre = 50,
                               ratio = c(1, 1),
                               labels = c("A", "B"),
+                              pbr_block_size = 4L,
                               seed = NULL,
                               verbose = FALSE) {
   mbr_check_paper_metric_inputs(ratio = ratio, labels = labels)
@@ -197,7 +206,8 @@ replext_mbr_multi <- function(lambda_values = 15:30,
           n = rep(max_n_per_centre, n_centres),
           method = method,
           ratio = ratio,
-          labels = labels
+          labels = labels,
+          pbr_block_size = pbr_block_size
         )
 
         centre_allocations <- vector(mode = "list", length = n_centres)
@@ -238,6 +248,7 @@ replext_mbr_multi <- function(lambda_values = 15:30,
         n_centres = n_centres,
         max_n_per_centre = max_n_per_centre,
         n_simulations = n_simulations,
+        pbr_block_size = pbr_block_size,
         mean_n_recruited_per_centre = mean(mean_n_recruited, na.rm = TRUE),
         mean_final_imbalance = mean(pooled_imbalance, na.rm = TRUE),
         mean_correct_guess_probability = mean(mean_cgp, na.rm = TRUE),

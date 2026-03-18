@@ -26,10 +26,10 @@ mbr_app_text_to_vector <- function(text_input) {
 mbr_append_input_params <- function(df, input) {
   out <- df
 
-  out$run_code <- mmints::generateRunCode()
   out$app_setting <- input$setting
   out$app_methods <- paste(input$methods, collapse = ", ")
   out$app_n_simulations <- input$n_simulations
+  out$app_pbr_block_size <- input$pbr_block_size
 
   if (identical(input$setting, "single")) {
     out$app_n_values <- input$n_values
@@ -42,6 +42,7 @@ mbr_append_input_params <- function(df, input) {
     out$app_max_n_per_centre <- input$max_n_per_centre
   }
 
+  out$run_code <- mmints::generateRunCode()
   out
 }
 
@@ -62,6 +63,7 @@ mbr_app_run_simulation <- function(input) {
         ratio = c(1, 1),
         labels = c("A", "B"),
         imbalance_threshold = input$imbalance_threshold,
+        pbr_block_size = input$pbr_block_size,
         verbose = FALSE
       )
     )
@@ -75,6 +77,7 @@ mbr_app_run_simulation <- function(input) {
     max_n_per_centre = input$max_n_per_centre,
     ratio = c(1, 1),
     labels = c("A", "B"),
+    pbr_block_size = input$pbr_block_size,
     verbose = FALSE
   )
 }
@@ -121,7 +124,12 @@ mbr_app_plot <- function(df, metric) {
 
   ggplot2::ggplot(
     df,
-    ggplot2::aes_string(x = x_var, y = metric, color = "method", group = "method")
+    ggplot2::aes(
+      x = !!rlang::sym(x_var),
+      y = !!rlang::sym(metric),
+      color = !!rlang::sym("method"),
+      group = !!rlang::sym("method")
+    )
   ) +
     ggplot2::geom_line() +
     ggplot2::geom_point() +

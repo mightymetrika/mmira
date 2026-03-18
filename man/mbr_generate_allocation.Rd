@@ -8,7 +8,8 @@ mbr_generate_allocation(
   n,
   method = c("MBR", "PBR", "CR"),
   ratio = c(1, 1),
-  labels = NULL
+  labels = NULL,
+  pbr_block_size = 4L
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ mbr_generate_allocation(
 \item{ratio}{Integer allocation ratio.}
 
 \item{labels}{Character labels for each treatment arm.}
+
+\item{pbr_block_size}{Integer permuted block size used when \code{method = "PBR"}.}
 }
 \value{
 A character vector of length \code{n}.

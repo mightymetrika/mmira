@@ -15,6 +15,7 @@
 #'   \item multicentre runs with `lambda = 15:30`, `10` centres, and a maximum
 #'   of `50` participants per centre
 #'   \item `1000` simulation runs per condition
+#'   \item permuted block randomisation default block size of `4`
 #' }
 #'
 #' The app is intentionally simple so it can later be extended with the
@@ -58,6 +59,13 @@ replext_mbr_app <- function() {
             "Complete randomisation (CR)" = "CR"
           ),
           selected = c("MBR", "PBR", "CR")
+        ),
+        shiny::numericInput(
+          inputId = "pbr_block_size",
+          label = "PBR block size (used only for PBR)",
+          value = 4,
+          min = 1,
+          step = 1
         ),
         shiny::numericInput(
           inputId = "n_simulations",

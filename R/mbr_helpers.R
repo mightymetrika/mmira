@@ -45,24 +45,40 @@ mbr_permuted_block <- function(ratio, labels) {
 #' @param n Final allocation length.
 #' @param ratio Integer allocation ratio.
 #' @param labels Character labels for each treatment arm.
+#' @param block_size Integer permuted block size. Must be a positive multiple
+#'   of `sum(ratio)`.
 #'
 #' @return A character vector of length `n`.
 #'
 #' @keywords internal
-mbr_pbr_allocation <- function(n, ratio = c(1, 1), labels = NULL) {
+mbr_pbr_allocation <- function(n,
+                               ratio = c(1, 1),
+                               labels = NULL,
+                               block_size = 4L) {
   checked <- mbr_validate_ratio_labels(ratio = ratio, labels = labels)
   ratio <- checked$ratio
   labels <- checked$labels
 
-  block_length <- sum(ratio)
-  n_blocks <- ceiling(n / block_length)
+  block_unit <- sum(ratio)
+  block_size <- as.integer(block_size[1])
 
-  out <- character(n_blocks * block_length)
+  if (length(block_size) != 1L || is.na(block_size) || block_size <= 0L) {
+    stop("block_size must be a single positive integer")
+  }
+
+  if ((block_size %% block_unit) != 0L) {
+    stop("block_size must be a positive multiple of sum(ratio)")
+  }
+
+  block_ratio <- ratio * (block_size / block_unit)
+  n_blocks <- ceiling(n / block_size)
+
+  out <- character(n_blocks * block_size)
   start <- 1L
 
   for (i in seq_len(n_blocks)) {
-    block_i <- mbr_permuted_block(ratio = ratio, labels = labels)
-    end <- start + block_length - 1L
+    block_i <- mbr_permuted_block(ratio = block_ratio, labels = labels)
+    end <- start + block_size - 1L
     out[start:end] <- block_i
     start <- end + 1L
   }
@@ -129,10 +145,12 @@ mbr_complete_randomisation <- function(n, ratio = c(1, 1), labels = NULL) {
   ratio <- checked$ratio
   labels <- checked$labels
 
-  sample(labels,
-         size = n,
-         replace = TRUE,
-         prob = ratio / sum(ratio))
+  sample(
+    labels,
+    size = n,
+    replace = TRUE,
+    prob = ratio / sum(ratio)
+  )
 }
 
 #' Generate one allocation for a named method
@@ -141,6 +159,7 @@ mbr_complete_randomisation <- function(n, ratio = c(1, 1), labels = NULL) {
 #' @param method Randomisation method.
 #' @param ratio Integer allocation ratio.
 #' @param labels Character labels for each treatment arm.
+#' @param pbr_block_size Integer permuted block size used when `method = "PBR"`.
 #'
 #' @return A character vector of length `n`.
 #'
@@ -148,7 +167,8 @@ mbr_complete_randomisation <- function(n, ratio = c(1, 1), labels = NULL) {
 mbr_generate_allocation <- function(n,
                                     method = c("MBR", "PBR", "CR"),
                                     ratio = c(1, 1),
-                                    labels = NULL) {
+                                    labels = NULL,
+                                    pbr_block_size = 4L) {
   method <- match.arg(method)
 
   if (method == "MBR") {
@@ -156,7 +176,14 @@ mbr_generate_allocation <- function(n,
   }
 
   if (method == "PBR") {
-    return(mbr_pbr_allocation(n = n, ratio = ratio, labels = labels))
+    return(
+      mbr_pbr_allocation(
+        n = n,
+        ratio = ratio,
+        labels = labels,
+        block_size = pbr_block_size
+      )
+    )
   }
 
   if (method == "CR") {
@@ -172,6 +199,7 @@ mbr_generate_allocation <- function(n,
 #' @param method Randomisation method.
 #' @param ratio Integer allocation ratio.
 #' @param labels Character labels for each treatment arm.
+#' @param pbr_block_size Integer permuted block size used when `method = "PBR"`.
 #'
 #' @return A list with one allocation vector per centre.
 #'
@@ -179,7 +207,8 @@ mbr_generate_allocation <- function(n,
 mbr_generate_allocations <- function(n,
                                      method = c("MBR", "PBR", "CR"),
                                      ratio = c(1, 1),
-                                     labels = NULL) {
+                                     labels = NULL,
+                                     pbr_block_size = 4L) {
   method <- match.arg(method)
 
   if (method == "MBR") {
@@ -191,7 +220,8 @@ mbr_generate_allocations <- function(n,
       n = n_i,
       method = method,
       ratio = ratio,
-      labels = labels
+      labels = labels,
+      pbr_block_size = pbr_block_size
     )
   })
 }

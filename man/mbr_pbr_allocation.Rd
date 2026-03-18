@@ -4,7 +4,7 @@
 \alias{mbr_pbr_allocation}
 \title{Generate a permuted block randomisation allocation}
 \usage{
-mbr_pbr_allocation(n, ratio = c(1, 1), labels = NULL)
+mbr_pbr_allocation(n, ratio = c(1, 1), labels = NULL, block_size = 4L)
 }
 \arguments{
 \item{n}{Final allocation length.}
@@ -12,6 +12,9 @@ mbr_pbr_allocation(n, ratio = c(1, 1), labels = NULL)
 \item{ratio}{Integer allocation ratio.}
 
 \item{labels}{Character labels for each treatment arm.}
+
+\item{block_size}{Integer permuted block size. Must be a positive multiple
+of \code{sum(ratio)}.}
 }
 \value{
 A character vector of length \code{n}.

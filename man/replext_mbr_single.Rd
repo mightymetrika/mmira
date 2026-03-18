@@ -11,6 +11,7 @@ replext_mbr_single(
   ratio = c(1, 1),
   labels = c("A", "B"),
   imbalance_threshold = 2,
+  pbr_block_size = 4L,
   seed = NULL,
   verbose = FALSE
 )
@@ -28,6 +29,8 @@ replext_mbr_single(
 
 \item{imbalance_threshold}{Integer. Threshold used for the suballocation
 imbalance metric.}
+
+\item{pbr_block_size}{Integer permuted block size used when \code{method = "PBR"}.}
 
 \item{seed}{Optional random seed.}
 

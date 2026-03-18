@@ -9,7 +9,8 @@ simulate_mbr_once(
   method = c("MBR", "PBR", "CR"),
   ratio = c(1, 1),
   labels = c("A", "B"),
-  imbalance_threshold = 2
+  imbalance_threshold = 2,
+  pbr_block_size = 4L
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ simulate_mbr_once(
 
 \item{imbalance_threshold}{Integer. Threshold used for the suballocation
 imbalance metric. Defaults to \code{2} to match the paper's main setting.}
+
+\item{pbr_block_size}{Integer permuted block size used when \code{method = "PBR"}.}
 }
 \value{
 A named list with the allocation and summary metrics.
